@@ -3,9 +3,657 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Portfolio</title>
+    <meta name="theme-color" content="#f4f3e8">
+    <meta name="description" content="A game maker in progress, learning GDScript with Godot and dreaming up new worlds.">
+    <title>Player One | Game Maker in Progress</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --paper: #f4f3e8;
+            --ink: #1d2925;
+            --muted: #59645d;
+            --line: #c9cec0;
+            --lime: #d7fa54;
+            --coral: #ff705e;
+            --teal: #8bd8c2;
+            --mono: "Courier New", monospace;
+            --display: "Trebuchet MS", "Arial Rounded MT Bold", sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background-color: var(--paper);
+            background-image: radial-gradient(#a7ae9d 0.65px, transparent 0.65px);
+            background-size: 15px 15px;
+            font-family: var(--display);
+            line-height: 1.55;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page-shell {
+            width: min(1080px, calc(100% - 48px));
+            margin-inline: auto;
+        }
+
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 78px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .wordmark,
+        .nav-links,
+        .eyebrow,
+        .section-kicker,
+        .scene-caption,
+        .status-label,
+        .footer-note {
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .wordmark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .wordmark-mark {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            background: var(--coral);
+            box-shadow: 5px 5px 0 var(--ink);
+            transform: rotate(-8deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            text-decoration-thickness: 1px;
+            text-underline-offset: 4px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus-visible {
+            text-decoration-color: var(--coral);
+            text-decoration-thickness: 3px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            align-items: center;
+            gap: clamp(36px, 7vw, 88px);
+            padding-block: 74px 82px;
+        }
+
+        .eyebrow,
+        .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin: 0 0 20px;
+            color: var(--muted);
+        }
+
+        .eyebrow::before {
+            width: 9px;
+            height: 9px;
+            content: "";
+            background: var(--coral);
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            max-width: 580px;
+            margin-bottom: 22px;
+            font-size: 68px;
+            line-height: 0.99;
+            letter-spacing: 0;
+        }
+
+        h1 span {
+            color: #397c67;
+        }
+
+        .hero-copy {
+            max-width: 455px;
+            margin-bottom: 28px;
+            color: var(--muted);
+            font-size: 18px;
+        }
+
+        .hero-copy strong {
+            color: var(--ink);
+        }
+
+        .text-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--lime);
+            border: 2px solid var(--ink);
+            box-shadow: 4px 4px 0 var(--ink);
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: transform 150ms ease, box-shadow 150ms ease;
+        }
+
+        .text-link:hover,
+        .text-link:focus-visible {
+            box-shadow: 1px 1px 0 var(--ink);
+            transform: translate(3px, 3px);
+        }
+
+        .text-link span {
+            font-size: 18px;
+            line-height: 12px;
+        }
+
+        .game-scene {
+            position: relative;
+            min-height: 390px;
+            overflow: hidden;
+            background: #91d9c4;
+            border: 2px solid var(--ink);
+            box-shadow: 9px 9px 0 var(--ink);
+            image-rendering: pixelated;
+        }
+
+        .scene-sun {
+            position: absolute;
+            top: 46px;
+            right: 52px;
+            width: 74px;
+            height: 74px;
+            background: var(--lime);
+            box-shadow: 0 0 0 10px rgb(215 250 84 / 20%);
+        }
+
+        .scene-cloud {
+            position: absolute;
+            top: 82px;
+            left: 44px;
+            width: 66px;
+            height: 16px;
+            background: var(--paper);
+            box-shadow: 15px -15px 0 var(--paper), 30px 0 0 var(--paper), 100px 52px 0 var(--paper), 115px 37px 0 var(--paper), 130px 52px 0 var(--paper);
+        }
+
+        .scene-hill {
+            position: absolute;
+            bottom: 112px;
+            left: -42px;
+            width: 280px;
+            height: 110px;
+            background: #56a987;
+            transform: skewY(-12deg);
+        }
+
+        .scene-hill-back {
+            right: -44px;
+            bottom: 108px;
+            left: auto;
+            width: 270px;
+            height: 128px;
+            background: #397c67;
+            transform: skewY(13deg);
+        }
+
+        .scene-ground {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 126px;
+            background: #355d43;
+            border-top: 9px solid var(--ink);
+        }
+
+        .scene-ground::before,
+        .scene-ground::after {
+            position: absolute;
+            top: 26px;
+            width: 14px;
+            height: 14px;
+            content: "";
+            background: var(--lime);
+            box-shadow: 29px 32px 0 var(--coral), 88px 6px 0 var(--teal), 144px 42px 0 var(--lime);
+        }
+
+        .scene-ground::before {
+            left: 30px;
+        }
+
+        .scene-ground::after {
+            right: 20px;
+            top: 56px;
+            transform: scale(0.7);
+        }
+
+        .scene-player {
+            position: absolute;
+            z-index: 1;
+            bottom: 105px;
+            left: 48%;
+            width: 46px;
+            height: 58px;
+            background: var(--coral);
+            border: 4px solid var(--ink);
+            box-shadow: 0 12px 0 -4px var(--ink), 14px 0 0 -4px var(--ink), -14px 0 0 -4px var(--ink);
+        }
+
+        .scene-player::before {
+            position: absolute;
+            top: 13px;
+            right: 5px;
+            width: 7px;
+            height: 7px;
+            content: "";
+            background: var(--ink);
+            box-shadow: -16px 0 0 var(--ink);
+        }
+
+        .scene-player::after {
+            position: absolute;
+            top: 28px;
+            left: 12px;
+            width: 12px;
+            height: 4px;
+            content: "";
+            background: var(--ink);
+        }
+
+        .scene-caption {
+            position: absolute;
+            z-index: 2;
+            right: 14px;
+            bottom: 12px;
+            color: white;
+            font-size: 10px;
+            text-shadow: 1px 1px var(--ink);
+        }
+
+        .status-strip {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            border-block: 1px solid var(--line);
+        }
+
+        .status-item {
+            min-height: 116px;
+            padding: 22px 26px 20px 0;
+        }
+
+        .status-item + .status-item {
+            padding-left: 26px;
+            border-left: 1px solid var(--line);
+        }
+
+        .status-label {
+            display: block;
+            margin-bottom: 9px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .status-item p {
+            margin-bottom: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .about-section {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 64px;
+            padding-block: 82px 88px;
+        }
+
+        .section-kicker {
+            margin-bottom: 14px;
+            color: #397c67;
+        }
+
+        h2 {
+            margin-bottom: 0;
+            font-size: 36px;
+            line-height: 1.12;
+        }
+
+        .about-copy p {
+            max-width: 590px;
+            margin-bottom: 16px;
+            color: var(--muted);
+            font-size: 17px;
+        }
+
+        .about-copy p:last-child {
+            margin-bottom: 0;
+        }
+
+        .learning-section {
+            padding-block: 34px 42px;
+            background: var(--ink);
+            color: var(--paper);
+        }
+
+        .learning-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .learning-section .section-kicker {
+            color: var(--lime);
+        }
+
+        .learning-section h2 {
+            font-size: 32px;
+        }
+
+        .learning-heading > p {
+            max-width: 300px;
+            margin-bottom: 3px;
+            color: #c6d0c6;
+            font-size: 14px;
+        }
+
+        .learning-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid #536259;
+        }
+
+        .learning-item {
+            min-height: 116px;
+            padding: 22px 24px 12px 0;
+        }
+
+        .learning-item + .learning-item {
+            padding-left: 24px;
+            border-left: 1px solid #536259;
+        }
+
+        .learning-item span {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--lime);
+            font-family: var(--mono);
+            font-size: 11px;
+        }
+
+        .learning-item h3 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .site-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding-block: 24px;
+        }
+
+        .footer-note {
+            margin: 0;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        @media (max-width: 760px) {
+            .page-shell {
+                width: min(100% - 36px, 560px);
+            }
+
+            .site-header {
+                min-height: 68px;
+            }
+
+            .nav-links {
+                gap: 16px;
+                font-size: 10px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 42px;
+                padding-block: 58px 66px;
+            }
+
+            h1 {
+                max-width: 500px;
+                font-size: 58px;
+            }
+
+            .game-scene {
+                min-height: 330px;
+            }
+
+            .about-section {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding-block: 64px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-shell {
+                width: calc(100% - 32px);
+            }
+
+            .wordmark {
+                gap: 8px;
+                font-size: 10px;
+            }
+
+            .wordmark-mark {
+                width: 12px;
+                height: 12px;
+            }
+
+            .nav-links {
+                gap: 12px;
+                font-size: 9px;
+            }
+
+            .hero {
+                padding-top: 48px;
+            }
+
+            h1 {
+                font-size: 48px;
+            }
+
+            .hero-copy {
+                font-size: 16px;
+            }
+
+            .game-scene {
+                min-height: 280px;
+                box-shadow: 6px 6px 0 var(--ink);
+            }
+
+            .status-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .status-item,
+            .status-item + .status-item {
+                min-height: auto;
+                padding: 17px 0;
+                border-left: 0;
+            }
+
+            .status-item + .status-item {
+                border-top: 1px solid var(--line);
+            }
+
+            .learning-heading {
+                align-items: start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .learning-section h2 {
+                font-size: 28px;
+            }
+
+            .learning-list {
+                grid-template-columns: 1fr;
+            }
+
+            .learning-item,
+            .learning-item + .learning-item {
+                min-height: auto;
+                padding: 18px 0;
+                border-left: 0;
+            }
+
+            .learning-item + .learning-item {
+                border-top: 1px solid #536259;
+            }
+
+            .site-footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    
+    <header class="site-header page-shell">
+        <a class="wordmark" href="#top" aria-label="Player One, home">
+            <span class="wordmark-mark" aria-hidden="true"></span>
+            <span>Player One / Game Maker</span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="#about">About</a>
+            <a href="#learning">Learning</a>
+        </nav>
+    </header>
+
+    <main id="top">
+        <section class="hero page-shell" aria-labelledby="hero-title">
+            <div class="hero-content">
+                <p class="eyebrow">Indie game maker in progress</p>
+                <h1 id="hero-title">I make games. <span>I’m learning how.</span></h1>
+                <p class="hero-copy">Currently learning <strong>GDScript with Godot</strong>, one experiment at a time. I love making games and bringing little worlds to life.</p>
+                <a class="text-link" href="#learning">See what I’m learning <span aria-hidden="true">↘</span></a>
+            </div>
+
+            <div class="game-scene" role="img" aria-label="A tiny pixel-art adventurer exploring a bright green game world">
+                <span class="scene-sun" aria-hidden="true"></span>
+                <span class="scene-cloud" aria-hidden="true"></span>
+                <span class="scene-hill" aria-hidden="true"></span>
+                <span class="scene-hill scene-hill-back" aria-hidden="true"></span>
+                <span class="scene-player" aria-hidden="true"></span>
+                <span class="scene-ground" aria-hidden="true"></span>
+                <span class="scene-caption" aria-hidden="true">New world loading...</span>
+            </div>
+        </section>
+
+        <section class="status-strip page-shell" aria-label="A few things about me">
+            <div class="status-item">
+                <span class="status-label">Right now</span>
+                <p>Learning GDScript</p>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Tool of choice</span>
+                <p>Godot Engine</p>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Favorite thing</span>
+                <p>Making games</p>
+            </div>
+        </section>
+
+        <section class="about-section page-shell" id="about" aria-labelledby="about-title">
+            <div>
+                <p class="section-kicker">A little about me</p>
+                <h2 id="about-title">Curiosity is my favorite game mechanic.</h2>
+            </div>
+            <div class="about-copy">
+                <p>I love making games: dreaming up ideas, figuring out how they work, and turning them into something you can play.</p>
+                <p>I’m currently learning GDScript in Godot and exploring the building blocks of game development. This is the start of the adventure, and there’s always something new to try.</p>
+            </div>
+        </section>
+
+        <section class="learning-section" id="learning" aria-labelledby="learning-title">
+            <div class="page-shell">
+                <div class="learning-heading">
+                    <div>
+                        <p class="section-kicker">Current quest</p>
+                        <h2 id="learning-title">Learning as I go.</h2>
+                    </div>
+                    <p>Small steps, playable experiments, and lots of curiosity.</p>
+                </div>
+                <div class="learning-list">
+                    <article class="learning-item">
+                        <span>01 / Code</span>
+                        <h3>Getting comfortable with GDScript</h3>
+                    </article>
+                    <article class="learning-item">
+                        <span>02 / Build</span>
+                        <h3>Exploring scenes and nodes in Godot</h3>
+                    </article>
+                    <article class="learning-item">
+                        <span>03 / Play</span>
+                        <h3>Making little ideas playable</h3>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer page-shell">
+        <p class="footer-note">Player One / Game Maker in Progress</p>
+        <p class="footer-note">Made with curiosity and a little bit of code.</p>
+    </footer>
 </body>
 </html>
